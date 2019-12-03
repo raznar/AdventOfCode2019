@@ -1,8 +1,15 @@
-import urllib.request
-import ssl
+#!/usr/bin/python3
+import math
 
-context = ssl._create_unverified_context()
-page = urllib.request.urlopen('https://adventofcode.com/2019/day/1/input', context=context)
+part1InputFile = "Day1Part1-Input.txt"
+massArray = []
+with open(part1InputFile, "r") as inputText:
+	for mass in inputText:
+		massArray.append(math.floor(int(mass)/3) - 2)
 
+totalFuel = 0
+for fuel in massArray:
+	totalFuel += fuel
 
-print(page.read())
+print("Part 1 Total Fuel: " + str(totalFuel))
+
