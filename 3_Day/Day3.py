@@ -46,7 +46,6 @@ def directionToCoord(wire):
 
 	return coordList
 
-
 coordList1 = directionToCoord(wire1)
 coordList2 = directionToCoord(wire2)
 
@@ -56,6 +55,9 @@ for coord1 in coordList1:
 		if coord2 == coord1:
 			tempCoord = deepcopy(coord2)
 			intersections.append(tempCoord)
+
+
+
 
 def calcManhattanDist(coord):
 	return abs(coord["x"]) + abs(coord["y"])
