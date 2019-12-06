@@ -9,6 +9,7 @@ def generateLineSegs(wire):
 	currentPos = {"x": 0, "y": 0}
 	horSegList = []
 	verSegList = []
+	distTraveled = 0
 
 	for segment in wire:
 		direction = segment[0]
@@ -21,7 +22,10 @@ def generateLineSegs(wire):
 				"x1": currentPos["x"],
 				"y1": currentPos["y"],
 				"x2": nextCoord["x"],
-				"y2": nextCoord["y"]})
+				"y2": nextCoord["y"],
+				"distTraveled": distTraveled,
+				"dir": 0})
+			distTraveled += magnitude
 			currentPos = deepcopy(nextCoord)
 
 		elif direction == "U":
@@ -31,7 +35,10 @@ def generateLineSegs(wire):
 				"x1": currentPos["x"],
 				"y1": currentPos["y"],
 				"x2": nextCoord["x"],
-				"y2": nextCoord["y"]})
+				"y2": nextCoord["y"],
+				"distTraveled": distTraveled,
+				"dir": 0})
+			distTraveled += magnitude
 			currentPos = deepcopy(nextCoord)
 
 		elif direction == "L":
@@ -41,7 +48,10 @@ def generateLineSegs(wire):
 				"x1": nextCoord["x"],
 				"y1": nextCoord["y"],
 				"x2": currentPos["x"],
-				"y2": currentPos["y"]})
+				"y2": currentPos["y"],
+				"distTraveled": distTraveled,
+				"dir": 1})
+			distTraveled += magnitude
 			currentPos = deepcopy(nextCoord)
 
 		elif direction == "D":
@@ -51,7 +61,10 @@ def generateLineSegs(wire):
 				"x1": nextCoord["x"],
 				"y1": nextCoord["y"],
 				"x2": currentPos["x"],
-				"y2": currentPos["y"]})
+				"y2": currentPos["y"],
+				"distTraveled": distTraveled,
+				"dir": 1})
+			distTraveled += magnitude
 			currentPos = deepcopy(nextCoord)
 
 	return horSegList, verSegList
@@ -66,12 +79,22 @@ def isIntersecting(horSeg, verSeg):
 	if (x > horSeg["x1"] and x < horSeg["x2"]) and \
 		(y > verSeg["y1"] and y < verSeg["y2"]):
 		dist = abs(x) + abs(y)
-		return True, ((x, y), dist)
+
+		totalSteps = horSeg["distTraveled"] + verSeg["distTraveled"]
+		if horSeg["dir"] == 0:
+			totalSteps += abs(x-horSeg["x1"])
+		else:
+			totalSteps += abs(x-horSeg["x2"])
+		if verSeg["dir"] == 0:
+			totalSteps += abs(y-verSeg["y1"])
+		else:
+			totalSteps += abs(y-verSeg["y2"])
+
+		return True, ((x, y), dist, totalSteps)
 	else:
 		return False, ((0, 0), 0)
 
 intersections = []
-
 for horSeg in horSegList1:
 	for verSeg in verSegList2:
 		result = isIntersecting(horSeg, verSeg)
@@ -85,11 +108,14 @@ for horSeg in horSegList2:
 		if result[0]:
 			intersections.append(result[1])
 
-distList = []
+manDistList = []
+stepDistList = []
 for point in intersections:
-	distList.append(point[1])
+	manDistList.append(point[1])
+	stepDistList.append(point[2])
 
-distList.sort()
-print("Closest Manhatten Distance is: " + str(distList[0]))
-
+manDistList.sort()
+stepDistList.sort()
+print("Closest Manhatten Distance is: " + str(manDistList[0]))
+print("Closest Intersection by Steps is: " + str(stepDistList[0]))
 
